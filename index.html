@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Outreach Automation System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #050810;
+    --surface: #0d1117;
+    --card: #111827;
+    --border: #1f2d40;
+    --accent: #00f5c4;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --danger: #ef4444;
+    --success: #10b981;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 20% 20%, rgba(0,245,196,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124,58,237,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* Header */
+  header {
+    padding: 24px 0 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text h1 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .logo-text span {
+    font-size: 11px;
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 2px;
+  }
+
+  .status-bar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    color: var(--success);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* Nav tabs */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: none;
+  }
+
+  .tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-card:nth-child(2) { animation-delay: 0.1s; }
+  .stat-card:nth-child(3) { animation-delay: 0.2s; }
+  .stat-card:nth-child(4) { animation-delay: 0.3s; }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -1px;
+  }
+
+  .stat-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Main grid */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .card-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(0,245,196,0.1);
+    border: 1px solid rgba(0,245,196,0.3);
+    color: var(--accent);
+  }
+
+  .badge.purple {
+    background: rgba(124,58,237,0.1);
+    border-color: rgba(124,58,237,0.3);
+    color: #a78bfa;
+  }
+
+  .badge.amber {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.3);
+    color: var(--accent3);
+  }
+
+  /* Platforms section */
+  .platforms-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 20px;
+  }
+
+  .platform-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .platform-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .platform-card.active {
+    border-color: rgba(0,245,196,0.4);
+    background: rgba(0,245,196,0.03);
+  }
+
+  .platform-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .platform-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .toggle {
+    width: 36px;
+    height: 20px;
+    background: var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .toggle.on { background: var(--accent); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: white;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s;
+  }
+
+  .toggle.on::after { transform: translateX(16px); }
+
+  .platform-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .platform-stats {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Keywords */
+  .keywords-section { padding: 20px; }
+
+  .keywords-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .keyword-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.3);
+    color: #c4b5fd;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .keyword-tag:hover { background: rgba(124,58,237,0.2); }
+
+  .keyword-tag .remove {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .keyword-input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input:focus { border-color: var(--accent); }
+
+  .btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #050810;
+  }
+
+  .btn-primary:hover { background: #00ddb0; transform: translateY(-1px); }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-sm { padding: 6px 12px; font-size: 11px; }
+
+  /* Message templates */
+  .templates-list { padding: 16px 20px; }
+
+  .template-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .template-item:hover { border-color: var(--accent2); }
+
+  .template-item.selected {
+    border-color: var(--accent);
+    background: rgba(0,245,196,0.03);
+  }
+
+  .template-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .template-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .template-meta {
+    display: flex;
+    gap: 6px;
+  }
+
+  .template-body {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .var-highlight {
+    color: var(--accent3);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* Activity feed */
+  .activity-feed { padding: 12px 20px 20px; }
+
+  .activity-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(31,45,64,0.5);
+    animation: slideIn 0.3s ease both;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .activity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .activity-dot.linkedin { background: #0077b5; }
+  .activity-dot.twitter { background: #1da1f2; }
+  .activity-dot.email { background: var(--accent3); }
+  .activity-dot.reddit { background: #ff4500; }
+  .activity-dot.discord { background: #5865f2; }
+
+  .activity-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .activity-main {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  .activity-main strong { color: var(--accent); }
+
+  .activity-time {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Flow diagram */
+  .flow-section { padding: 24px; }
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .flow-step {
+    flex-shrink: 0;
+    text-align: center;
+    width: 110px;
+  }
+
+  .flow-box {
+    width: 90px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    transition: border-color 0.2s;
+  }
+
+  .flow-box:hover { border-color: var(--accent); }
+
+  .flow-box .icon { font-size: 20px; margin-bottom: 6px; }
+
+  .flow-box.highlight {
+    border-color: rgba(0,245,196,0.5);
+    background: rgba(0,245,196,0.05);
+    color: var(--accent);
+  }
+
+  .flow-arrow {
+    flex-shrink: 0;
+    color: var(--accent);
+    font-size: 18px;
+    padding: 0 4px;
+    margin-top: -20px;
+  }
+
+  /* Config panel */
+  .config-section { padding: 20px; }
+
+  .config-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(31,45,64,0.5);
+  }
+
+  .config-label {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .config-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .number-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .num-btn {
+    width: 28px;
+    height: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s;
+  }
+
+  .num-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .num-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    min-width: 24px;
+    text-align: center;
+    color: var(--accent);
+  }
+
+  /* Full-width sections */
+  .full-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  /* Code block */
+  .code-block {
+    background: #030508;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: #94d4b0;
+    line-height: 1.8;
+    overflow-x: auto;
+    margin: 16px 20px;
+  }
+
+  .code-comment { color: #3f5a4a; }
+  .code-key { color: #7c3aed; }
+  .code-string { color: var(--accent3); }
+  .code-num { color: #f472b6; }
+
+  /* Bottom CTA */
+  .cta-bar {
+    background: linear-gradient(135deg, rgba(0,245,196,0.05), rgba(124,58,237,0.05));
+    border: 1px solid rgba(0,245,196,0.2);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+
+  .cta-text h3 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+  .cta-text p { font-size: 12px; color: var(--muted); }
+
+  .cta-actions { display: flex; gap: 12px; }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .platforms-grid { grid-template-columns: repeat(2, 1fr); }
+    .full-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">⛓</div>
+        <div class="logo-text">
+          <h1>Web3 Outreach Automation</h1>
+          <span>MULTI-PLATFORM LEAD ENGINE</span>
+        </div>
+      </div>
+      <div class="status-bar">
+        <div class="status-pill">
+          <div class="pulse"></div>
+          SYSTEM ACTIVE
+        </div>
+        <button class="btn btn-primary" onclick="toggleSystem()">⏸ Pause All</button>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <div class="tab active" onclick="setTab(this)">Dashboard</div>
+      <div class="tab" onclick="setTab(this)">Platforms</div>
+      <div class="tab" onclick="setTab(this)">Templates</div>
+      <div class="tab" onclick="setTab(this)">Workflow</div>
+      <div class="tab" onclick="setTab(this)">Analytics</div>
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Leads Detected</div>
+      <div class="stat-value" id="leadsCount">247</div>
+      <div class="stat-sub">+18 in last hour</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Messages Sent</div>
+      <div class="stat-value" id="sentCount">183</div>
+      <div class="stat-sub">Across all platforms</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Response Rate</div>
+      <div class="stat-value">34<span style="font-size:18px">%</span></div>
+      <div class="stat-sub">↑ 6% from last week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Conversions</div>
+      <div class="stat-value">12</div>
+      <div class="stat-sub">Calls booked this week</div>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="main-grid">
+
+    <!-- Left: Platforms + Keywords -->
+    <div>
+
+      <div class="card" style="margin-bottom:24px">
+        <div class="card-header">
+          <div class="card-title">
+            📡 Monitoring Platforms
+            <span class="badge">6 ACTIVE</span>
+          </div>
+          <button class="btn btn-outline btn-sm">+ Add Platform</button>
+        </div>
+        <div class="platforms-grid">
+          <div class="platform-card active">
+            <div class="platform-header">
+              <div class="platform-icon" style="background:#0077b5">💼</div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="platform-name">LinkedIn</div>
+            <div class="platform-stats">Posts · DMs · Comments<br>89 leads today</div>
+          </div>
+          <div class="platform-card active">
+            <div class="platform-header">
+              <div class="platform-icon" style="background:#1da1f2">𝕏</div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="platform-name">Twitter / X</div>
+            <div class="platform-stats">Tweets · DMs<br>62 leads today</div>
+          </div>
+          <div class="platform-card active">
+            <div class="platform-header">
+              <div class="platform-icon" style="background:#ff4500">R</div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="platform-name">Reddit</div>
+            <div class="platform-stats">r/web3 · r/crypto<br>28 leads today</div>
+          </div>
+          <div class="platform-card active">
+            <div class="platform-header">
+              <div class="platform-icon" style="background:#5865f2">D</div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="platform-name">Discord</div>
+            <div class="platform-stats">Servers · DMs<br>34 leads today</div>
+          </div>
+          <div class="platform-card active">
+            <div class="platform-header">
+              <div class="platform-icon" style="background:var(--accent3)">✉</div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="platform-name">Email</div>
+            <div class="platform-stats">Cold outreach<br>Via Hunter.io + Apollo</div>
+          </div>
+          <div class="platform-card">
+            <div class="platform-header">
+              <div class="platform-icon" style="background:#25d366">📱</div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="platform-name">Telegram</div>
+            <div class="platform-stats">Channels · Groups<br>Coming soon</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:24px">
+        <div class="card-header">
+          <div class="card-title">
+            🔍 Trigger Keywords
+            <span class="badge purple">AI SCORED</span>
+          </div>
+        </div>
+        <div class="keywords-section">
+          <div class="keywords-wrap" id="keywordsWrap">
+            <div class="keyword-tag">web3 marketing <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">blockchain development <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">NFT launch <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">DeFi project <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">smart contract <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">crypto marketing agency <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">web3 developer needed <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">tokenomics design <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">DAO setup <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">looking for web3 team <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">metaverse marketing <span class="remove" onclick="removeTag(this)">×</span></div>
+            <div class="keyword-tag">hiring solidity dev <span class="remove" onclick="removeTag(this)">×</span></div>
+          </div>
+          <div class="keyword-input-row">
+            <input class="input" id="kwInput" type="text" placeholder="Add keyword or phrase..." onkeydown="if(event.key==='Enter')addKeyword()">
+            <button class="btn btn-primary" onclick="addKeyword()">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflow flow diagram -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚡ Automation Workflow</div>
+          <span class="badge amber">N8N / ZAPIER</span>
+        </div>
+        <div class="flow-section">
+          <div class="flow-diagram">
+            <div class="flow-step">
+              <div class="flow-box highlight">
+                <div class="icon">🔍</div>
+                Monitor Platforms
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-box">
+                <div class="icon">🤖</div>
+                AI Keyword Match
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-box">
+                <div class="icon">⭐</div>
+                Score Lead (1-10)
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-box">
+                <div class="icon">✍</div>
+                Personalize Msg
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-box highlight">
+                <div class="icon">📤</div>
+                Send Outreach
+              </div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-box">
+                <div class="icon">📊</div>
+                Track & Follow-Up
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right sidebar -->
+    <div>
+
+      <!-- Live activity -->
+      <div class="card" style="margin-bottom:24px">
+        <div class="card-header">
+          <div class="card-title">
+            🔴 Live Activity Feed
+          </div>
+          <span class="badge">REALTIME</span>
+        </div>
+        <div class="activity-feed" id="activityFeed">
+          <div class="activity-item">
+            <div class="activity-dot linkedin"></div>
+            <div class="activity-content">
+              <div class="activity-main"><strong>@ArjunSharma_Web3</strong> posted about needing NFT marketing help on LinkedIn → Message sent</div>
+              <div class="activity-time">2 min ago · LinkedIn</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot twitter"></div>
+            <div class="activity-content">
+              <div class="activity-main"><strong>@defi_project</strong> tweeted "looking for blockchain dev team" → DM sent</div>
+              <div class="activity-time">5 min ago · Twitter</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot email"></div>
+            <div class="activity-content">
+              <div class="activity-main"><strong>rahul@cryptoventures.io</strong> email found via Apollo → Cold email sent</div>
+              <div class="activity-time">11 min ago · Email</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot reddit"></div>
+            <div class="activity-content">
+              <div class="activity-main"><strong>u/web3startup</strong> posted in r/web3 about DAO marketing → Outreach sent</div>
+              <div class="activity-time">18 min ago · Reddit</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot discord"></div>
+            <div class="activity-content">
+              <div class="activity-main"><strong>crypto_tom#2847</strong> asked for solidity devs in Discord → DM sent</div>
+              <div class="activity-time">24 min ago · Discord</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot linkedin"></div>
+            <div class="activity-content">
+              <div class="activity-main"><strong>@PriyaTokens</strong> commented about "web3 marketing agency needed" → Connection + message</div>
+              <div class="activity-time">31 min ago · LinkedIn</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Safety config -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🛡 Safety & Rate Limits</div>
+          <span class="badge amber">SAFE MODE</span>
+        </div>
+        <div class="config-section">
+          <div class="config-row">
+            <div>
+              <div class="config-label">LinkedIn DMs / day</div>
+              <div class="config-sub">Avoid account ban (max 25)</div>
+            </div>
+            <div class="number-input">
+              <div class="num-btn" onclick="changeVal('li', -1)">−</div>
+              <div class="num-val" id="li">20</div>
+              <div class="num-btn" onclick="changeVal('li', 1)">+</div>
+            </div>
+          </div>
+          <div class="config-row">
+            <div>
+              <div class="config-label">Twitter DMs / day</div>
+              <div class="config-sub">Keep under rate limit</div>
+            </div>
+            <div class="number-input">
+              <div class="num-btn" onclick="changeVal('tw', -1)">−</div>
+              <div class="num-val" id="tw">30</div>
+              <div class="num-btn" onclick="changeVal('tw', 1)">+</div>
+            </div>
+          </div>
+          <div class="config-row">
+            <div>
+              <div class="config-label">Cold emails / day</div>
+              <div class="config-sub">Warm domain, avoid spam</div>
+            </div>
+            <div class="number-input">
+              <div class="num-btn" onclick="changeVal('em', -1)">−</div>
+              <div class="num-val" id="em">50</div>
+              <div class="num-btn" onclick="changeVal('em', 1)">+</div>
+            </div>
+          </div>
+          <div class="config-row">
+            <div>
+              <div class="config-label">Min. lead score</div>
+              <div class="config-sub">Only contact quality leads</div>
+            </div>
+            <div class="number-input">
+              <div class="num-btn" onclick="changeVal('sc', -1)">−</div>
+              <div class="num-val" id="sc">7</div>
+              <div class="num-btn" onclick="changeVal('sc', 1)">+</div>
+            </div>
+          </div>
+          <div class="config-row">
+            <div>
+              <div class="config-label">Delay between msgs</div>
+              <div class="config-sub">Minutes (humanization)</div>
+            </div>
+            <div class="number-input">
+              <div class="num-btn" onclick="changeVal('dl', -5)">−</div>
+              <div class="num-val" id="dl">15</div>
+              <div class="num-btn" onclick="changeVal('dl', 5)">+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Templates section -->
+  <div class="full-grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💬 Message Templates</div>
+        <button class="btn btn-outline btn-sm">+ New Template</button>
+      </div>
+      <div class="templates-list">
+        <div class="template-item selected">
+          <div class="template-top">
+            <div class="template-name">LINKEDIN_DM_WEB3_MKT</div>
+            <div class="template-meta">
+              <span class="badge">PRIMARY</span>
+            </div>
+          </div>
+          <div class="template-body">
+            Hi <span class="var-highlight">{{first_name}}</span> 👋 Saw your post about <span class="var-highlight">{{trigger_topic}}</span> — we specialize in Web3 marketing & growth for exactly this. We've helped 30+ projects from launch to 10k+ community. Would love to share what's worked. Open to a quick 15-min call?
+          </div>
+        </div>
+        <div class="template-item">
+          <div class="template-top">
+            <div class="template-name">TWITTER_DM_DEV</div>
+            <div class="template-meta">
+              <span class="badge purple">DEV FOCUS</span>
+            </div>
+          </div>
+          <div class="template-body">
+            Hey <span class="var-highlight">{{handle}}</span>! Noticed you're building <span class="var-highlight">{{project_type}}</span>. Our team does full-stack Web3 dev — Solidity, React, NFT contracts. Happy to scope your project for free. DM me?
+          </div>
+        </div>
+        <div class="template-item">
+          <div class="template-top">
+            <div class="template-name">EMAIL_COLD_OUTREACH</div>
+            <div class="template-meta">
+              <span class="badge amber">EMAIL</span>
+            </div>
+          </div>
+          <div class="template-body">
+            Subject: Web3 <span class="var-highlight">{{service_type}}</span> for <span class="var-highlight">{{company_name}}</span>
+            <br><br>Noticed your recent <span class="var-highlight">{{platform}}</span> post about <span class="var-highlight">{{pain_point}}</span>. We've solved this exact problem for similar projects. Can I send over a quick case study?
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🔧 Stack & Integration Guide</div>
+        <span class="badge">SETUP GUIDE</span>
+      </div>
+      <div class="code-block">
+<span class="code-comment"># ================================</span>
+<span class="code-comment"># WEB3 OUTREACH AUTOMATION STACK</span>
+<span class="code-comment"># ================================</span>
+
+<span class="code-key">MONITORING:</span>
+  LinkedIn:    Phantombuster + Sales Nav
+  Twitter:     Tweetdeck + Apify scraper
+  Reddit:      Reddit API + PRAW python
+  Discord:     Discord.py bot
+  Email leads: Hunter.io + Apollo.io
+
+<span class="code-key">AUTOMATION:</span>
+  Orchestrator: n8n (self-hosted) 
+  Alt:          Zapier / Make.com
+  LinkedIn DMs: Waalaxy / Expandi
+  Email seq:    Instantly.ai / Lemlist
+
+<span class="code-key">AI PERSONALIZATION:</span>
+  Model:       GPT-4 / Claude API
+  Prompt:      Inject {{context}} from 
+               their post/tweet
+  Score leads: 1-10 relevance via AI
+
+<span class="code-key">COMPLIANCE:</span>
+  - Never spam, always add value
+  - LinkedIn: max 20-25 DMs/day
+  - Email: warm domain ≥ 30 days
+  - Include unsubscribe in emails
+  - GDPR: scrape public data only
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="cta-bar">
+    <div class="cta-text">
+      <h3>🚀 Ready to Launch Your Web3 Outreach Engine?</h3>
+      <p>This system monitors LinkedIn, Twitter, Reddit, Discord & email 24/7. When someone posts about Web3 needs, it instantly sends a personalized outreach message.</p>
+    </div>
+    <div class="cta-actions">
+      <button class="btn btn-outline" onclick="alert('Export config as JSON — integrate with n8n/Zapier')">📤 Export Config</button>
+      <button class="btn btn-primary" onclick="alert('Launch wizard — configure API keys and start automation')">▶ Launch System</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Animated counters
+  function animateCount(id, target) {
+    const el = document.getElementById(id);
+    let current = parseInt(el.textContent);
+    const step = Math.ceil(Math.abs(target - current) / 30);
+    const dir = target > current ? 1 : -1;
+    const interval = setInterval(() => {
+      current += dir * step;
+      if ((dir > 0 && current >= target) || (dir < 0 && current <= target)) {
+        current = target;
+        clearInterval(interval);
+      }
+      el.textContent = current;
+    }, 30);
+  }
+
+  // Simulate live updates
+  setInterval(() => {
+    const leads = parseInt(document.getElementById('leadsCount').textContent);
+    const sent = parseInt(document.getElementById('sentCount').textContent);
+    document.getElementById('leadsCount').textContent = leads + Math.floor(Math.random() * 2);
+    if (Math.random() > 0.4) {
+      document.getElementById('sentCount').textContent = sent + 1;
+    }
+  }, 8000);
+
+  // Live activity feed
+  const activities = [
+    { platform: 'linkedin', text: '<strong>@BlockchainFred</strong> posted "need web3 marketing" → Connection + DM sent', time: 'just now' },
+    { platform: 'twitter', text: '<strong>@nft_launch_2025</strong> tweeted about "hiring smart contract devs" → DM queued', time: 'just now' },
+    { platform: 'email', text: '<strong>ceo@defi-protocol.com</strong> found via Hunter.io → Cold email sent', time: 'just now' },
+    { platform: 'discord', text: '<strong>web3builder#9321</strong> mentioned "need marketing agency" → DM sent', time: 'just now' },
+    { platform: 'reddit', text: '<strong>u/launchingdao</strong> posted in r/CryptoStartups → Outreach sent', time: 'just now' },
+  ];
+
+  let actIdx = 0;
+  setInterval(() => {
+    const feed = document.getElementById('activityFeed');
+    const a = activities[actIdx % activities.length];
+    actIdx++;
+    const item = document.createElement('div');
+    item.className = 'activity-item';
+    item.innerHTML = `
+      <div class="activity-dot ${a.platform}"></div>
+      <div class="activity-content">
+        <div class="activity-main">${a.text}</div>
+        <div class="activity-time">${a.time} · ${a.platform.charAt(0).toUpperCase()+a.platform.slice(1)}</div>
+      </div>`;
+    feed.insertBefore(item, feed.firstChild);
+    if (feed.children.length > 8) feed.removeChild(feed.lastChild);
+  }, 12000);
+
+  function setTab(el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleSystem() {
+    const btn = event.target;
+    if (btn.textContent.includes('Pause')) {
+      btn.textContent = '▶ Resume All';
+      btn.style.background = 'var(--accent3)';
+      document.querySelector('.status-pill').style.background = 'rgba(245,158,11,0.1)';
+      document.querySelector('.status-pill').style.color = 'var(--accent3)';
+      document.querySelector('.status-pill').innerHTML = '<div class="pulse" style="background:var(--accent3)"></div> PAUSED';
+    } else {
+      btn.textContent = '⏸ Pause All';
+      btn.style.background = '';
+      document.querySelector('.status-pill').style.background = '';
+      document.querySelector('.status-pill').style.color = '';
+      document.querySelector('.status-pill').innerHTML = '<div class="pulse"></div> SYSTEM ACTIVE';
+    }
+  }
+
+  function addKeyword() {
+    const input = document.getElementById('kwInput');
+    const val = input.value.trim();
+    if (!val) return;
+    const tag = document.createElement('div');
+    tag.className = 'keyword-tag';
+    tag.innerHTML = `${val} <span class="remove" onclick="removeTag(this)">×</span>`;
+    document.getElementById('keywordsWrap').appendChild(tag);
+    input.value = '';
+  }
+
+  function removeTag(el) {
+    el.parentElement.remove();
+  }
+
+  function changeVal(id, delta) {
+    const el = document.getElementById(id);
+    let v = parseInt(el.textContent) + delta;
+    if (v < 0) v = 0;
+    el.textContent = v;
+  }
+</script>
+
+</body>
+</html>
